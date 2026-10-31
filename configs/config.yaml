@@ -1,0 +1,53 @@
+seed: 42
+device: cpu
+paths: {raw: data/CMAPSSData, artifacts: artifacts}
+data:
+  subsets: [FD001, FD002, FD003, FD004]
+  multi_condition: {FD001: false, FD002: true, FD003: false, FD004: true}  # readme.txt
+  n_regimes: 6                    # ASSUMPTION[A6]
+  smooth_window: 5                # ASSUMPTION[A16]
+  min_abs_trend: 0.3              # ASSUMPTION[A5]
+  rul_cap: {FD001: 125, FD002: 125, FD003: 125, FD004: 125}   # ASSUMPTION[A3]
+features: {window: 30, stats: [mean, std, min, max, slope, kurt]}
+eval: {min_cut_len: 19, n_cut_reps: 20, cv_folds: 5, seq_inner_val_frac: 0.15}  # ASSUMPTION[A7]
+anomaly:
+  healthy_cycle_range: [30, 70]   # ASSUMPTION[A4]
+  hidden: [64, 32]
+  latent: 16
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  batch_size: 256
+  epochs: 300
+  patience: 20
+  tau_quantile: 0.99              # ASSUMPTION[A10]
+  persist_k: 4                    # ASSUMPTION[A10]
+  positive_rul: 30
+  split: {train: 0.6, es: 0.2, cal: 0.2}
+  fpr_target: 0.01     # add under existing anomaly:
+rul:
+  primary: xgb                    # must be a tree model (SHAP + engine-bootstrap)
+  models: [ridge, extratrees, xgb, lstm, gru, cnn1d]
+  low_rul_threshold: 30
+  low_rul_weight: 3.0             # ASSUMPTION[A14]
+  bootstrap_n: 10                 # ASSUMPTION[A17]
+  conservative_k: 1.96            # ASSUMPTION[A17]
+  ridge: {alpha: 10.0}
+  extratrees: {n_estimators: 300, min_samples_leaf: 5, max_features: 0.5}
+  xgb: {n_estimators: 500, max_depth: 6, learning_rate: 0.05, subsample: 0.8,
+        colsample_bytree: 0.8, min_child_weight: 5, objective: "reg:squarederror",
+        tree_method: hist}        # ASSUMPTION[A9]
+  seq: {hidden: 64, layers: 2, dropout: 0.2, lr: 1.0e-3, batch_size: 256, epochs: 60, patience: 8}
+  cons_q: 0.8          # add under existing rul:
+  use_cycle: false     # flip to true for the second experiment
+triage:                           # ASSUMPTION[A8]
+  critical_rul: 15
+  high_rul: 30
+  medium_rul: 60
+  medium_hi: 1.0
+  high_hi: 2.0
+  critical_hi: 4.0
+mlops:
+  experiment: ACTG_RUL
+  model_prefix: rul
+  promote_margin: 0.0
+  retrain: {rmse_factor: 1.25, days: 7, psi_alarm: 0.25}   # ASSUMPTION[A12]

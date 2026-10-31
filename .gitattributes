@@ -1,0 +1,4 @@
+artifacts/models/FD001/rul_bundle_v2_gru.joblib filter=lfs diff=lfs merge=lfs -text
+artifacts/models/FD002/rul_bundle_v2_gru.joblib filter=lfs diff=lfs merge=lfs -text
+artifacts/models/FD003/rul_bundle_v2_gru.joblib filter=lfs diff=lfs merge=lfs -text
+artifacts/models/FD004/rul_bundle_v2_gru.joblib filter=lfs diff=lfs merge=lfs -text
