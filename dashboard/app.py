@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from fleetpm.config import load_config  # noqa: E402
 from fleetpm.models.metrics import summarize  # noqa: E402
 
-st.set_page_config(page_title="FleetPM | Predictive Maintenance Monitor", layout="wide")
+st.set_page_config(page_title="AEGIS | Predictive Maintenance Monitor", layout="wide")
 cfg = load_config()
 ART = ROOT / cfg["paths"]["artifacts"]
 RAW = ROOT / cfg["paths"]["raw"]
