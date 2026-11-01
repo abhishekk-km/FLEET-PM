@@ -1,0 +1,54 @@
+
+===== FD001: 100 training engines replayed =====
+ best policy per r (in-sample param; cost in C_waste units per engine):
+  r=1      {'run_to_failure': 1.0, 'fixed_interval': 1.0, 'rul_raw': 1.0, 'rul_offset': 2.3, 'rul_conformal10': 3.9} -> run_to_failure
+  r=3      {'run_to_failure': 3.0, 'fixed_interval': 3.0, 'rul_raw': 2.6, 'rul_offset': 3.0, 'rul_conformal10': 4.0} -> rul_raw
+  r=10     {'run_to_failure': 10.0, 'fixed_interval': 9.9, 'rul_raw': 4.7, 'rul_offset': 4.7, 'rul_conformal10': 4.6} -> rul_conformal10
+  r=30     {'run_to_failure': 30.0, 'fixed_interval': 29.4, 'rul_raw': 6.1, 'rul_offset': 6.2, 'rul_conformal10': 6.2} -> rul_raw
+  r=100    {'run_to_failure': 100.0, 'fixed_interval': 61.1, 'rul_raw': 8.3, 'rul_offset': 8.4, 'rul_conformal10': 7.7} -> rul_conformal10
+  r=300    {'run_to_failure': 300.0, 'fixed_interval': 73.7, 'rul_raw': 8.3, 'rul_offset': 8.4, 'rul_conformal10': 7.7} -> rul_conformal10
+  r=1000   {'run_to_failure': 1000.0, 'fixed_interval': 81.3, 'rul_raw': 8.3, 'rul_offset': 8.4, 'rul_conformal10': 7.7} -> rul_conformal10
+  rul_raw: r=100 param 9 failures_avoided 1.000 mean_wasted 8.3 | break-even vs RTF {'point': 1.6257556664437942, 'ci': [1.0353218432956621, 2.0022003718155843], 'boot_never': 0} vs fixed {'point': 1.516716888470923, 'ci': [1.0, 2.0022003718155843], 'boot_never': 0} (cv: {'vs_rtf': 1.8041864093920723, 'vs_fixed': 1.0})
+  rul_offset: r=100 param 6 failures_avoided 1.000 mean_wasted 8.4 | break-even vs RTF {'point': 3.036771118035458, 'ci': [2.643081486974105, 3.370064329271928], 'boot_never': 0} vs fixed {'point': 3.036771118035458, 'ci': [2.643081486974105, 3.370064329271928], 'boot_never': 0} (cv: {'vs_rtf': 3.036771118035458, 'vs_fixed': 2.7364399970746707})
+  rul_conformal10: r=100 param 4 failures_avoided 1.000 mean_wasted 7.7 | break-even vs RTF {'point': 4.150404757850476, 'ci': [3.739937302478797, 4.605922041145106], 'boot_never': 0} vs fixed {'point': 4.150404757850476, 'ci': [3.739937302478797, 4.768611697714469], 'boot_never': 0} (cv: {'vs_rtf': 4.150404757850476, 'vs_fixed': 4.008806328898465})
+
+===== FD002: 260 training engines replayed =====
+ best policy per r (in-sample param; cost in C_waste units per engine):
+  r=1      {'run_to_failure': 1.0, 'fixed_interval': 1.0, 'rul_raw': 1.0, 'rul_offset': 2.8, 'rul_conformal10': 4.5} -> run_to_failure
+  r=3      {'run_to_failure': 3.0, 'fixed_interval': 3.0, 'rul_raw': 2.9, 'rul_offset': 3.5, 'rul_conformal10': 4.8} -> rul_raw
+  r=10     {'run_to_failure': 10.0, 'fixed_interval': 10.0, 'rul_raw': 5.5, 'rul_offset': 5.3, 'rul_conformal10': 5.6} -> rul_offset
+  r=30     {'run_to_failure': 30.0, 'fixed_interval': 29.7, 'rul_raw': 6.7, 'rul_offset': 7.0, 'rul_conformal10': 7.0} -> rul_raw
+  r=100    {'run_to_failure': 100.0, 'fixed_interval': 62.7, 'rul_raw': 8.1, 'rul_offset': 8.3, 'rul_conformal10': 8.3} -> rul_raw
+  r=300    {'run_to_failure': 300.0, 'fixed_interval': 73.8, 'rul_raw': 10.2, 'rul_offset': 9.8, 'rul_conformal10': 9.8} -> rul_offset
+  r=1000   {'run_to_failure': 1000.0, 'fixed_interval': 81.8, 'rul_raw': 10.2, 'rul_offset': 9.8, 'rul_conformal10': 10.4} -> rul_offset
+  rul_raw: r=100 param 7 failures_avoided 0.981 mean_wasted 6.2 | break-even vs RTF {'point': 1.8041864093920723, 'ci': [1.3422366797559475, 2.3004301197729182], 'boot_never': 0} vs fixed {'point': 1.6831803533309566, 'ci': [1.109752496412072, 2.263150571827054], 'boot_never': 0} (cv: {'vs_rtf': 1.8041864093920723, 'vs_fixed': 1.0353218432956621})
+  rul_offset: r=100 param 4 failures_avoided 0.985 mean_wasted 6.7 | break-even vs RTF {'point': 3.739937302478797, 'ci': [3.489101213406773, 4.150404757850476], 'boot_never': 0} vs fixed {'point': 3.739937302478797, 'ci': [3.489101213406773, 4.150404757850476], 'boot_never': 0} (cv: {'vs_rtf': 3.739937302478797, 'vs_fixed': 3.739937302478797})
+  rul_conformal10: r=100 param 3 failures_avoided 0.992 mean_wasted 7.5 | break-even vs RTF {'point': 5.111433483440167, 'ci': [4.768611697714469, 5.478901179593942], 'boot_never': 0} vs fixed {'point': 5.111433483440167, 'ci': [4.768611697714469, 5.478901179593942], 'boot_never': 0} (cv: {'vs_rtf': 5.111433483440167, 'vs_fixed': 5.111433483440167})
+
+===== FD003: 100 training engines replayed =====
+ best policy per r (in-sample param; cost in C_waste units per engine):
+  r=1      {'run_to_failure': 1.0, 'fixed_interval': 1.0, 'rul_raw': 1.0, 'rul_offset': 2.5, 'rul_conformal10': 4.2} -> run_to_failure
+  r=3      {'run_to_failure': 3.0, 'fixed_interval': 3.0, 'rul_raw': 2.7, 'rul_offset': 3.1, 'rul_conformal10': 4.3} -> rul_raw
+  r=10     {'run_to_failure': 10.0, 'fixed_interval': 10.0, 'rul_raw': 4.7, 'rul_offset': 4.8, 'rul_conformal10': 4.7} -> rul_raw
+  r=30     {'run_to_failure': 30.0, 'fixed_interval': 29.5, 'rul_raw': 5.6, 'rul_offset': 5.6, 'rul_conformal10': 5.7} -> rul_raw
+  r=100    {'run_to_failure': 100.0, 'fixed_interval': 89.2, 'rul_raw': 7.7, 'rul_offset': 7.8, 'rul_conformal10': 8.2} -> rul_raw
+  r=300    {'run_to_failure': 300.0, 'fixed_interval': 103.3, 'rul_raw': 8.4, 'rul_offset': 8.4, 'rul_conformal10': 8.2} -> rul_conformal10
+  r=1000   {'run_to_failure': 1000.0, 'fixed_interval': 107.2, 'rul_raw': 8.4, 'rul_offset': 8.4, 'rul_conformal10': 8.2} -> rul_conformal10
+  rul_raw: r=100 param 6 failures_avoided 0.980 mean_wasted 5.7 | break-even vs RTF {'point': 1.6831803533309566, 'ci': [1.0353218432956621, 2.039329110899971], 'boot_never': 0} vs fixed {'point': 1.6831803533309566, 'ci': [1.0353218432956621, 2.381685551976158], 'boot_never': 0} (cv: {'vs_rtf': 2.3004301197729182, 'vs_fixed': 1.0})
+  rul_offset: r=100 param 3 failures_avoided 0.980 mean_wasted 5.8 | break-even vs RTF {'point': 3.2550885998350583, 'ci': [2.7364399970746707, 3.679329866163345], 'boot_never': 0} vs fixed {'point': 3.2550885998350583, 'ci': [2.7364399970746707, 3.739937302478797], 'boot_never': 0} (cv: {'vs_rtf': 3.2550885998350583, 'vs_fixed': 2.7364399970746707})
+  rul_conformal10: r=100 param 4 failures_avoided 1.000 mean_wasted 8.2 | break-even vs RTF {'point': 4.448782831127584, 'ci': [3.872038781812555, 4.937047852839003], 'boot_never': 0} vs fixed {'point': 4.448782831127584, 'ci': [3.872038781812555, 4.937047852839003], 'boot_never': 0} (cv: {'vs_rtf': 4.448782831127584, 'vs_fixed': 4.150404757850476})
+
+===== FD004: 249 training engines replayed =====
+ best policy per r (in-sample param; cost in C_waste units per engine):
+  r=1      {'run_to_failure': 1.0, 'fixed_interval': 1.0, 'rul_raw': 1.0, 'rul_offset': 4.8, 'rul_conformal10': 8.0} -> run_to_failure
+  r=3      {'run_to_failure': 3.0, 'fixed_interval': 3.0, 'rul_raw': 2.9, 'rul_offset': 5.4, 'rul_conformal10': 8.2} -> rul_raw
+  r=10     {'run_to_failure': 10.0, 'fixed_interval': 10.0, 'rul_raw': 7.4, 'rul_offset': 7.5, 'rul_conformal10': 9.1} -> rul_raw
+  r=30     {'run_to_failure': 30.0, 'fixed_interval': 29.9, 'rul_raw': 11.4, 'rul_offset': 11.5, 'rul_conformal10': 11.5} -> rul_raw
+  r=100    {'run_to_failure': 100.0, 'fixed_interval': 84.3, 'rul_raw': 14.8, 'rul_offset': 15.0, 'rul_conformal10': 14.7} -> rul_conformal10
+  r=300    {'run_to_failure': 300.0, 'fixed_interval': 107.4, 'rul_raw': 16.9, 'rul_offset': 16.7, 'rul_conformal10': 17.1} -> rul_offset
+  r=1000   {'run_to_failure': 1000.0, 'fixed_interval': 120.0, 'rul_raw': 18.7, 'rul_offset': 18.4, 'rul_conformal10': 19.1} -> rul_offset
+  rul_raw: r=100 param 12 failures_avoided 0.980 mean_wasted 12.8 | break-even vs RTF {'point': 1.8679135990207825, 'ci': [1.1489510001873091, 2.465811075822603], 'boot_never': 0} vs fixed {'point': 1.7426333860096501, 'ci': [1.0, 2.465811075822603], 'boot_never': 0} (cv: {'vs_rtf': 1.8679135990207825, 'vs_fixed': 1.0})
+  rul_offset: r=100 param 7 failures_avoided 0.976 mean_wasted 12.6 | break-even vs RTF {'point': 6.517339604882424, 'ci': [4.523423955885907, 9.547716114208056], 'boot_never': 0} vs fixed {'point': 6.517339604882424, 'ci': [4.605922041145106, 9.547716114208056], 'boot_never': 0} (cv: {'vs_rtf': 6.517339604882424, 'vs_fixed': 5.672426068491977})
+  rul_conformal10: r=100 param 5 failures_avoided 0.984 mean_wasted 13.1 | break-even vs RTF {'point': 9.221978823334327, 'ci': [6.747544053110693, 12.173827277396613], 'boot_never': 0} vs fixed {'point': 9.221978823334327, 'ci': [6.747544053110693, 12.173827277396613], 'boot_never': 0} (cv: {'vs_rtf': 9.221978823334327, 'vs_fixed': 8.603464416684503})
+
+Saved artifacts/ext_cost_policy.json, figures/ext_cost_policy.png

@@ -1,0 +1,27 @@
+
+===== FD001: faithfulness =====
+[FD001] 14 sensors, 112 features, trees 300, lr 0.083
+[FD001] fold 1/5 full RMSE 15.84 top3 ['sensor_15', 'sensor_4', 'sensor_9'] (78s)
+[FD001] fold 2/5 full RMSE 15.23 top3 ['sensor_4', 'sensor_2', 'sensor_21'] (69s)
+[FD001] fold 3/5 full RMSE 14.72 top3 ['sensor_4', 'sensor_15', 'sensor_11'] (57s)
+[FD001] fold 4/5 full RMSE 13.13 top3 ['sensor_15', 'sensor_4', 'sensor_11'] (71s)
+Timeout (0:05:00)!
+Thread 0x00000001fe403f80 (most recent call first):
+  File "/opt/homebrew/lib/python3.11/site-packages/xgboost/core.py", line 2391 in update
+  File "/opt/homebrew/lib/python3.11/site-packages/xgboost/training.py", line 200 in train
+  File "/opt/homebrew/lib/python3.11/site-packages/xgboost/core.py", line 751 in inner_f
+  File "/opt/homebrew/lib/python3.11/site-packages/xgboost/sklearn.py", line 1368 in fit
+  File "/opt/homebrew/lib/python3.11/site-packages/xgboost/core.py", line 751 in inner_f
+  File "/Users/abhishekkumarmishra/Downloads/TATA/TATA code files/src/fleetpm/models/rul_tabular.py", line 29 in fit
+  File "/Users/abhishekkumarmishra/Downloads/TATA/TATA code files/scripts/12_explain.py", line 73 in fit_eval
+  File "/Users/abhishekkumarmishra/Downloads/TATA/TATA code files/scripts/12_explain.py", line 97 in faith
+  File "/Users/abhishekkumarmishra/Downloads/TATA/TATA code files/scripts/12_explain.py", line 158 in <module>
+[FD001] fold 5/5 full RMSE 13.64 top3 ['sensor_4', 'sensor_11', 'sensor_15'] (69s)
+ full-model grouped-CV RMSE 14.51
+ k | remove-top minus remove-random RMSE (faithful if >0) | keep-top minus keep-random (faithful if <0)   [mean, 95% t-CI over folds]
+ 1 | -0.251 [-0.899, +0.397] | -2.534 [-7.129, +2.062]
+ 2 | -0.371 [-1.418, +0.676] | +0.824 [-0.969, +2.617]
+ 3 | -0.025 [-0.751, +0.702] | +0.488 [-0.989, +1.964]
+ 5 | -0.018 [-0.966, +0.931] | -0.538 [-2.356, +1.281]
+
+Saved artifacts/ext_explain.json

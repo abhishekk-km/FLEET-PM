@@ -1,0 +1,25 @@
+{
+  "work_order_id": "WO-FD002-ENG252-HIGH",
+  "incident_key": "FD002-ENG252-HIGH",
+  "status": "OPEN",
+  "simulated": true,
+  "timestamp_note": "replay cycle index of a benchmark trajectory, not calendar time",
+  "engine_id": 252,
+  "current_cycle": 215,
+  "rul_mean": 40.0,
+  "rul_std": 13.01,
+  "rul_conservative": 29.73,
+  "health_index": 0.097,
+  "persistent_anomaly": true,
+  "severity": "HIGH",
+  "rule_fired": "R2a:rul<=high_rul",
+  "recommendation": "Schedule maintenance within 2 operational cycles.",
+  "requires_human_review": false,
+  "auto_generated": true,
+  "model_version": "FD002-boost-xgb-s42",
+  "top_degradation_sensors": [
+    "sensor_4",
+    "sensor_11",
+    "sensor_3"
+  ]
+}

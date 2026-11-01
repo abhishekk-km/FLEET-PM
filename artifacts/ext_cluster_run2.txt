@@ -1,0 +1,19 @@
+NOTE: readme.txt lists two fault modes for FD003/FD004 (HPC + Fan); the paper text (Sec. V.C) states only HPC degradation was included in the challenge data. Unresolved here.
+
+===== FD001: fault-mode clustering (unsupervised, no labels) =====
+ n=100 silhouette {'2': 0.28474143618733255, '3': 0.26533874989336687, '4': 0.228527534069767} ARI(k=2) 0.847 [0.416, 1.0] sizes [54, 46] | Gaussian-null silhouette mean 0.269 p95 0.307 spearman(cluster,life) -0.18
+  top discriminating sensors (HYPOTHESIS only): [('sensor_4', 'T50'), ('sensor_15', 'BPR'), ('sensor_11', 'Ps30'), ('sensor_7', 'P30'), ('sensor_12', 'phi')]
+
+===== FD002: fault-mode clustering (unsupervised, no labels) =====
+ n=260 silhouette {'2': 0.2004011767375009, '3': 0.20536525604140551, '4': 0.15381005786768287} ARI(k=2) 0.619 [0.056, 0.962] sizes [114, 146] | Gaussian-null silhouette mean 0.184 p95 0.198 spearman(cluster,life) -0.43
+  top discriminating sensors (HYPOTHESIS only): [('sensor_14', 'NRc'), ('sensor_9', 'Nc'), ('sensor_13', 'NRf'), ('sensor_8', 'Nf'), ('sensor_11', 'Ps30')]
+
+===== FD003: fault-mode clustering (unsupervised, no labels) =====
+ n=100 silhouette {'2': 0.43404086263638825, '3': 0.3836673160261787, '4': 0.36857343192770137} ARI(k=2) 0.981 [0.882, 1.0] sizes [44, 56] | Gaussian-null silhouette mean 0.298 p95 0.321 spearman(cluster,life) -0.63
+  top discriminating sensors (HYPOTHESIS only): [('sensor_12', 'phi'), ('sensor_7', 'P30'), ('sensor_15', 'BPR'), ('sensor_20', 'W31'), ('sensor_21', 'W32')]
+
+===== FD004: fault-mode clustering (unsupervised, no labels) =====
+ n=249 silhouette {'2': 0.39689537042340406, '3': 0.33534592118194256, '4': 0.2956939511871348} ARI(k=2) 0.993 [0.96, 1.0] sizes [99, 150] | Gaussian-null silhouette mean 0.271 p95 0.304 spearman(cluster,life) -0.51
+  top discriminating sensors (HYPOTHESIS only): [('sensor_12', 'phi'), ('sensor_7', 'P30'), ('sensor_15', 'BPR'), ('sensor_21', 'W32'), ('sensor_20', 'W31')]
+
+Saved artifacts/ext_explain.json

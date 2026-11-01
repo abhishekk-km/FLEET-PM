@@ -1,0 +1,25 @@
+artifact_path: file:///C:/Users/shalu/Downloads/TATA/TATA/artifacts/mlartifacts/models/m-8be069c9c3544dd0ae94908d1e102392/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.14.3
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.1
+    skops_trusted_types:
+    - xgboost.core.Booster
+    - xgboost.sklearn.XGBRegressor
+mlflow_version: 3.17.1
+model_id: m-8be069c9c3544dd0ae94908d1e102392
+model_size_bytes: 2243517
+model_uuid: m-8be069c9c3544dd0ae94908d1e102392
+prompts: null
+run_id: e7bc084f8038472880af20720f90595b
+utc_time_created: '2026-10-19 11:33:57.718969'

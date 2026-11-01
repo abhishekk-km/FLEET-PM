@@ -1,0 +1,7 @@
+template: teliport_template.pptx teliport_template.pptx | scale 1.0 | slides kept 2
+decor on slide 2: 2 | layout provides logos: False | copying to appendix: True
+skipped ch_conf4: KeyError 'FD001'
+skipped ch_lead2: KeyError 'FD001'
+navigation built: 14 appendix slides
+saved fleetpm_submit_2slides.pptx (cover + slide 2)
+saved /Users/abhishekkumarmishra/Downloads/TATA/TATA code files/artifacts/figures/fleetpm_deck_v4.pptx | slides: 16

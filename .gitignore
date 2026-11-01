@@ -20,3 +20,34 @@ nohup.out
 *.pptx
 *.db
 upload_github.sh
+/cleanup_backup_20261027_094336.zip
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Python package metadata
+*.egg-info/
+
+# Test caches
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+
+# macOS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Backup files
+*.bak
+*.bak_*
+*.bak*
+
+# Excluded scripts
+write_*.py
+
+# Backup archives
+cleanup_backup_*.zip

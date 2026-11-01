@@ -1178,12 +1178,15 @@ def ring_icon(name, fr, col, kind, fr2=None, col2=None):
     return str(p)
 
 
-# MINDMAP SLIDE
+# MINDMAP SLIDE (final structured slide)
+from pptx.enum.chart import XL_MARKER_STYLE
 s = S2
 TR.update(ID)
-MIDB, DCY = "3B7DD8", "0B7F8A"
+MIDB, DCY, ORG = "3B7DD8", "0B7F8A", "E36414"
 BASE = "https://abhishekk-km.github.io/FLEET-PM/interactive/"
 REPO = "https://github.com/abhishekk-km/FLEET-PM"
+NAV_ON = False
+TITLE = "SENTINEL: Closed-Loop Predictive Maintenance for a Connected Fleet"
 an_, tg_, dcfg = cfg["anomaly"], cfg["triage"], cfg["data"]
 nfeat = [len(D[f]["P"]["pre"].sensors) * (len(cfg["features"]["stats"]) + 2) for f in FDS]
 nsen = [len(D[f]["P"]["pre"].sensors) for f in FDS]
@@ -1191,9 +1194,7 @@ rc_ = cfg["mlops"]["retrain"]
 NA = lambda v, fm=".2f": rng(v, fm) if v else "n/a"
 lead = [anom[f]["IFl_lead_median"] for f in FA]
 sl = [conf[f]["test"]["conformal_a0.1"]["slack_mean"] for f in FDS]
-NAV_ON = False
-CWc, CHc, STEPc, Y0c, LXc, RXc = 4.35, 1.56, 1.62, 2.1, 0.25, 8.73
-HX, HY, HR = 6.665, 4.35, 0.66
+CEN, LEFT, MID_ = PP_ALIGN.CENTER, PP_ALIGN.LEFT, MSO_ANCHOR.MIDDLE
 
 
 def lnk(sh, url):
@@ -1202,193 +1203,298 @@ def lnk(sh, url):
 
 def lbtn(x, y, w, h, label, url, fill=TB_NAVY, col="FFFFFF", fs=6.4):
     b = rect(s, x, y, w, h, fill, None, MSO_SHAPE.ROUNDED_RECTANGLE)
-    put(b, [(label, fs, True, col)], align=PP_ALIGN.CENTER, m=0.03)
+    put(b, [(label, fs, True, col)], align=CEN, m=0.03)
     lnk(b, url)
 
 
-def lpic(name, x, y, w, h, draw, ttl, url=None):
-    pic(s, mini(name, w, h, draw, ttl), x, y, w, h)
-    rect(s, x, y, w, h, None, BORD)
-    if url:
-        lnk(s.shapes[-2], url)
-        lbtn(x + w - 0.62, y + h - 0.16, 0.58, 0.13, "Interactive", url, TB_GOLD, TB_NAVY, 4.6)
+def badge(x, y, n):
+    put(rect(s, x, y, 0.22, 0.22, TB_GOLD, "FFFFFF", MSO_SHAPE.OVAL), [(str(n), 7.5, True, TB_NAVY)], align=CEN, m=0.0)
 
 
-def d_nfeat(axs):
-    ax = axs[0, 0]
-    ax.bar(range(4), nfeat, 0.55, color=[H(SUBF[f]) for f in FDS])
-    for i, v in enumerate(nfeat):
-        ax.text(i, v + 2, str(v), ha="center", fontsize=5.5)
-    ax.set_xticks(range(4))
-    ax.set_xticklabels(FDS)
-    ax.set_ylabel("Feature columns")
-    ax.set_ylim(0, max(nfeat) * 1.2)
+def itag(x, y, w, h, url):
+    lbtn(x + w - 0.62, y + h - 0.15, 0.58, 0.13, "Interactive", url, TB_GOLD, TB_NAVY, 4.6)
 
 
-text(s, 2.7, 0.08, 9.4, 0.4, [(TITLE, 16, True, TB_NAVY)], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-text(s, 2.7, 0.46, 9.4, 0.28, [("From Telemetry to Work Order: Sense, Prepare, Engineer, Detect, Predict, Decide, Act, Learn | NASA C-MAPSS FD001 to FD004 | Benchmark Replay, Simulated Actions", 6.8, False, TB_BLUE)], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-rect(s, 2.7, 0.76, 9.4, 0.03, TB_GOLD)
+# ---------------- title
+text(s, 2.7, 0.08, 9.4, 0.4, [(TITLE, 16, True, TB_NAVY)], align=CEN, anchor=MID_)
+text(s, 2.7, 0.46, 9.4, 0.3, [("From sensor readings to a maintenance work order: sense, prepare, detect, predict, decide, act, learn | NASA turbofan engine data, four subsets | Benchmark replay with simulated actions", 6.6, False, TB_BLUE)], align=CEN, anchor=MID_)
+rect(s, 2.7, 0.78, 9.4, 0.03, TB_GOLD)
 
-# ---------------- pipeline architecture band
-nodes = [("Sense", "Telemetry Ingest", "26 columns per cycle, batch now, stream-ready", "FD001 to FD004, 3 settings, 21 sensors", TB_NAVY, "data/CMAPSSData"),
-         ("Prepare", "Validate, Normalise", "NaN, duplicate, gap, label checks", f"KMeans k={dcfg['n_regimes']} z-score, median w={dcfg['smooth_window']}", TB_BLUE, "validated frames"),
-         ("Engineer", "Causal Features", "windows 30 and 10, 6 statistics", f"{min(nfeat)} to {max(nfeat)} columns, RUL cap {cap_}", TB_SKY, "features.joblib"),
-         ("Detect", "Anomaly Scoring", f"autoencoder, healthy cycles {an_['healthy_cycle_range'][0]}-{an_['healthy_cycle_range'][1]}", f"Isolation Forest, k={an_['persist_k']} flags", TB_CYAN, "anomaly_ifl.joblib"),
-         ("Predict", "RUL and Risk Bound", f"XGBoost {cfg['rul']['xgb']['n_estimators']} trees, grouped CV", "offset deployed, conformal 90% offline", DCY, "rul_bundle.joblib"),
-         ("Decide", "Rule Triage", "CRITICAL, HIGH, MEDIUM, LOW, REVIEW", f"RUL cut {tg_['critical_rul']}/{tg_['high_rul']}/{tg_['medium_rul']}; invalid: never LOW", TB_GOLD, "configs/config.yaml"),
-         ("Act", "Work Orders", "simulated, OPEN_SIMULATED, restart-safe", "deterministic ID, TreeSHAP top-3 sensors", TB_AMB, "work_orders_v2/*.json"),
-         ("Learn", "Gated Retraining", "MLflow champion and challenger", f"PSI>{rc_['psi_alarm']}, RMSE>{rc_['rmse_factor']}x, {rc_['days']} d; rollback", MIDB, "mlflow.db")]
-NX = lambda i: 0.25 + i * 1.62
-for lab, a0, a1, col in [("Data Engineering", 0, 2, TB_NAVY), ("Machine Learning", 3, 4, TB_CYAN), ("Agent (Non-LLM)", 5, 6, TB_AMB), ("MLOps", 7, 7, MIDB)]:
-    put(rect(s, NX(a0), 0.84, NX(a1) + 1.5 - NX(a0), 0.15, tint(col, 0.8), col), [(lab.upper(), 5.2, True, col)], align=PP_ALIGN.CENTER, m=0.01)
-for i, (verb, ttl, l1, l2, col, artf) in enumerate(nodes):
-    tc_ = TB_NAVY if col == TB_GOLD else "FFFFFF"
-    dc_ = TB_AMB if col == TB_GOLD else col
-    rect(s, NX(i), 1.01, 1.5, 0.3, col, None, MSO_SHAPE.PENTAGON)
-    put(rect(s, NX(i) + 0.04, 1.04, 0.24, 0.24, "FFFFFF", None, MSO_SHAPE.OVAL), [(str(i + 1), 8, True, dc_)], align=PP_ALIGN.CENTER, m=0.0)
-    text(s, NX(i) + 0.32, 1.01, 1.0, 0.3, [(verb, 8, True, tc_)], anchor=MSO_ANCHOR.MIDDLE)
-    put(rect(s, NX(i), 1.31, 1.5, 0.55, tint(col, 0.9), col), [(ttl, 6.6, True, dc_), (l1, 5.3, False, INK), (l2, 5.3, False, INK)], align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.MIDDLE, m=0.05)
-    put(rect(s, NX(i), 1.87, 1.5, 0.13, "E3E9F0", None, MSO_SHAPE.ROUNDED_RECTANGLE), [(artf, 4.6, False, "334155")], align=PP_ALIGN.CENTER, m=0.01)
-    if i < 7:
-        rect(s, NX(i) + 1.5, 1.1, 0.12, 0.14, "334155", None, MSO_SHAPE.RIGHT_ARROW)
-xa, xb = NX(7) + 0.75, NX(4) + 0.75
-line(s, xa, 2.0, xa, 2.06, "334155", False, 1.25)
-line(s, xa, 2.06, xb, 2.06, "334155", False, 1.25)
-line(s, xb, 2.06, xb, 2.0, "334155", True, 1.25)
-text(s, NX(5) + 0.1, 2.0, 3.0, 0.1, [("Feedback: new labels, drift gate, retrain, promote on RMSE gain", 4.6, True, "334155")], align=PP_ALIGN.CENTER)
+# ---------------- KPI row
+kp = [("Engines Escalated", f"{N_ORD} / {NTOT}", "engines given a simulated work order", N_ORD / NTOT, TB_BLUE, "gear", None, None),
+      ("Life-Prediction Error", rng(rm), "cycles, root mean squared; ring = share of the 125-cycle cap", nr_, TB_CYAN, "target", None, None)]
+if af:
+    kp.append(("Anomaly Detection Score", NA(af, ".3f"), "area under the curve; 1.0 is perfect", min(af), TB_SKY, "pulse", None, None))
+kp.append(("Safe-Bound Reliability", rng(cv, ".2f"), "engines whose true life stayed above the 90% bound", min(cv), TB_NAVY, "shield", None, None))
+kp.append(("Late (Unsafe) Predictions", f"{lr:.0%} to {lc:.0%}", "overestimates: raw (outer) vs with bound (inner)", lr, RED, "clock", lc, GREEN))
+if tp:
+    kp.append(("Early-Warning Recall", NA(tp), "near-failure readings flagged in time", min(tp), TB_GOLD, "bell", None, None))
+KW = (12.83 - 0.07 * (len(kp) - 1)) / len(kp)
+for i, (lab, val, sub, fr, col, kind, fr2, col2) in enumerate(kp):
+    x = 0.25 + i * (KW + 0.07)
+    rect(s, x, 0.86, KW, 0.69, TB_BG, TB_LINE)
+    rect(s, x, 0.86, 0.05, 0.69, col)
+    pic(s, ring_icon(f"v14k{i}", fr, col, kind, fr2, col2), x + 0.08, 0.9, 0.6, 0.6)
+    text(s, x + 0.72, 0.87, KW - 0.74, 0.17, [(lab.upper(), 5.6, True, TB_BLUE)])
+    text(s, x + 0.72, 1.02, KW - 0.74, 0.28, [(val, 11, True, TB_NAVY)])
+    text(s, x + 0.72, 1.29, KW - 0.74, 0.26, [(sub, 5.4, False, "5B6B80")])
 
-# ---------------- branches (under hub and cards)
-for k in range(3):
-    yc = Y0c + CHc / 2 + k * STEPc
-    line(s, HX, HY, LXc + CWc, yc, "7FA6D6", False, 1.75)
-    line(s, HX, HY, RXc, yc, "7FA6D6", False, 1.75)
+# ---------------- 1 story band
+badge(0.13, 1.6, 1)
+story = [("The Problem", TB_NAVY, "Machines such as engines are repaired after they break or on a fixed calendar. Breakdowns cause unplanned downtime; fixed servicing replaces parts that are still healthy. Yet sensor readings change gradually long before failure, which makes earlier action possible."),
+         ("The Objective", TB_BLUE, "Build a closed loop that reads sensor data, spots abnormal behaviour, estimates how many operating cycles remain before failure, decides urgency with fixed rules and raises a maintenance work order automatically. People review only the exceptions."),
+         ("Constraints and Coverage", TB_CYAN, f"No large language model; open-source tools only; failures are rare, so models learn from healthy behaviour. All four NASA turbofan subsets are processed ({NTOT} test engines; 1 or 6 operating conditions; 1 or 2 fault modes).")]
+SW = (12.83 - 0.12 * 2) / 3
+for i, (lab, col, body) in enumerate(story):
+    x = 0.25 + i * (SW + 0.12)
+    rect(s, x, 1.61, 0.05, 0.52, col)
+    put(rect(s, x + 0.05, 1.61, SW - 0.05, 0.52, tint(col, 0.9), TB_LINE), [(lab.upper(), 6, True, col), (body, 5.9, False, INK)], align=LEFT, m=0.08 if i else 0.2)
 
-# ---------------- KPI grid
-kp = [("Engines Escalated", f"{N_ORD} / {NTOT}", N_ORD / NTOT, TB_BLUE, "gear", None, None),
-      ("RUL Error (RMSE)", rng(rm), nr_, TB_CYAN, "target", None, None),
-      ("Anomaly AUROC", NA(af, ".3f"), min(af) if af else 0, TB_SKY, "pulse", None, None),
-      ("Bound Coverage 90%", rng(cv, ".2f"), min(cv), TB_NAVY, "shield", None, None),
-      ("Late Predictions", f"{lr:.0%} to {lc:.0%}", lr, RED, "clock", lc, GREEN),
-      ("Early-Warning Recall", NA(tp), min(tp) if tp else 0, TB_GOLD, "bell", None, None)]
-for i, (lab, val, fr, col, kind, fr2, col2) in enumerate(kp):
-    x, y = 4.7 + (i % 3) * 1.33, 2.12 + (i // 3) * 0.7
-    rect(s, x, y, 1.27, 0.66, TB_BG, TB_LINE)
-    rect(s, x, y, 0.04, 0.66, col)
-    pic(s, ring_icon(f"v13k{i}", fr, col, kind, fr2, col2), x + 0.06, y + 0.13, 0.4, 0.4)
-    text(s, x + 0.48, y + 0.02, 0.78, 0.26, [(lab.upper(), 4.8, True, TB_BLUE)])
-    text(s, x + 0.48, y + 0.28, 0.78, 0.36, [(val, 7.4, True, TB_NAVY)], anchor=MSO_ANCHOR.MIDDLE)
-text(s, 4.7, 3.55, 3.93, 0.2, [(f"Evidence: Official Test, Last Observed Cycle ({NTOT} Engines, 4 Subsets)", 5.6, True, TB_BLUE)], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+# ---------------- 2 architecture
+rect(s, 0.25, 2.2, 8.8, 2.82, "F7FAFE", TB_LINE)
+hdr = rect(s, 0.25, 2.2, 8.8, 0.26, TB_NAVY)
+put(rect(s, 0.3, 2.22, 0.22, 0.22, "FFFFFF", None, MSO_SHAPE.OVAL), [("2", 7.5, True, TB_NAVY)], align=CEN, m=0.0)
+text(s, 0.58, 2.2, 6.2, 0.26, [("ARCHITECTURE: DATA \u2192 FEATURES \u2192 MODELS \u2192 DECISION AGENT \u2192 WORK ORDER", 7.4, True, "FFFFFF")], anchor=MID_)
+text(s, 6.6, 2.2, 2.4, 0.26, [("closed loop, no manual steps", 6, False, "C9D6E6")], align=PP_ALIGN.RIGHT, anchor=MID_)
+chev = [("1 Sense", "telemetry in", TB_NAVY, "FFFFFF"), ("2 Prepare", "validate, normalise", TB_BLUE, "FFFFFF"), ("3 Engineer", "causal features", TB_SKY, "FFFFFF"),
+        ("4 Detect", "anomaly scoring", TB_CYAN, "FFFFFF"), ("5 Predict", "life and safe bound", DCY, "FFFFFF"), ("6 Decide", "rule triage", TB_GOLD, TB_NAVY),
+        ("7 Act", "work orders", TB_AMB, "FFFFFF"), ("8 Learn", "gated retraining", MIDB, "FFFFFF")]
+for i, (a_, b_, col, tcol) in enumerate(chev):
+    put(rect(s, 0.3 + i * 1.085, 2.5, 1.12, 0.3, col, None, MSO_SHAPE.PENTAGON), [(a_, 7, True, tcol), (b_, 5.2, False, tcol)], align=CEN, m=0.02)
+SX = lambda i: 0.3 + i * 1.76
+for lab, c0, c1, col in [("DATA ENGINEERING: PREPARE THE DATA", 0, 1, TB_NAVY), ("MACHINE LEARNING: DETECT, PREDICT", 2, 2, TB_CYAN), ("DECISION AGENT WITHOUT A LARGE LANGUAGE MODEL: DECIDE AND ACT", 3, 4, TB_AMB)]:
+    put(rect(s, SX(c0), 2.84, SX(c1) + 1.64 - SX(c0), 0.15, tint(col, 0.8), col), [(lab, 5, True, col)], align=CEN, m=0.01)
+stg = [
+    ("Ingest and Validate", TB_NAVY, TB_NAVY, [
+        "Reads 26 values per operating cycle (3 operating settings, 21 sensors) from the NASA files; a live data feed can replace the files.",
+        "Rejects missing values, duplicate cycles and gaps; aligns the official remaining-life labels.",
+        f"Rescales sensors within each operating condition; keeps the {min(nsen)} to {max(nsen)} sensors that trend with wear."]),
+    ("Causal Features", TB_BLUE, TB_BLUE, [
+        f"Smooths each sensor with a median over the last {dcfg['smooth_window']} cycles, using past data only (no peeking at the future).",
+        "Summarises the last 30 and 10 cycles: mean, spread, minimum, maximum, slope and distribution shape (kurtosis).",
+        f"Target: remaining useful life, capped at {cap_} cycles; {min(nfeat)} to {max(nfeat)} features per row."]),
+    ("Models", TB_CYAN, TB_CYAN, [
+        f"Anomaly: an autoencoder learns healthy behaviour; an Isolation Forest scores deviations; {an_['persist_k']} flagged cycles in a row raise an alert.",
+        f"Life: gradient-boosted trees (XGBoost, {cfg['rul']['xgb']['n_estimators']} trees) estimate remaining cycles; SHAP names the responsible sensors.",
+        "Safe bound: the prediction minus a calibrated margin, so overestimates become rare."]),
+    ("Triage Rules", TB_GOLD, TB_AMB, [
+        "Fixed, auditable rules; the first match wins and is recorded.",
+        f"Critical at {tg_['critical_rul']} cycles or fewer, high at {tg_['high_rul']}, medium at {tg_['medium_rul']} (provisional limits), or on a persistent anomaly.",
+        "Invalid input, or under 30 cycles of history, goes to a person for REVIEW; it is never marked healthy."]),
+    ("Work Orders", TB_SKY, TB_SKY, [
+        "Writes a simulated maintenance order with the rule that fired, the estimated life and the top 3 responsible sensors.",
+        "The same input always gives the same order identifier; one order per severity level, issued only on escalation.",
+        "Critical orders are flagged for human review. No physical action is ever triggered."])]
+for i, (nm, col, dc, bl) in enumerate(stg):
+    x = SX(i)
+    put(rect(s, x, 3.03, 0.4, 0.4, col, None, MSO_SHAPE.OVAL), [(str(i + 1), 11, True, TB_NAVY if col == TB_GOLD else "FFFFFF")], align=CEN, m=0.0)
+    text(s, x + 0.44, 3.03, 1.2, 0.4, [(nm, 7.2, True, dc)], anchor=MID_)
+    put(rect(s, x, 3.46, 1.64, 1.14, tint(col, 0.9), col), [("\u2022 " + b, 5.2, False, INK) for b in bl], align=LEFT, anchor=MSO_ANCHOR.TOP, m=0.05)
+    if i < 4:
+        rect(s, x + 1.65, 3.15, 0.11, 0.16, "334155", None, MSO_SHAPE.RIGHT_ARROW)
+put(rect(s, 0.3, 4.64, 0.9, 0.36, TB_NAVY, None, MSO_SHAPE.ROUNDED_RECTANGLE), [("MODEL OPERATIONS LOOP", 5.4, True, "FFFFFF")], align=CEN, m=0.02)
+ops = ["MLflow: records the settings, scores and model files of every run",
+       "Registry: a new model replaces the current one only if validation error improves",
+       f"Drift gate: retrain when the population stability index exceeds {rc_['psi_alarm']}, error exceeds {rc_['rmse_factor']} times baseline, or {rc_['days']} days pass",
+       "Retraining: validated on held-out engines; the previous model is kept for rollback",
+       "Monitor: read-only Streamlit dashboard of predictions, bounds and work orders"]
+CWp = (8.75 - 0.95 - 0.05 * 4) / 5
+for j, t_ in enumerate(ops):
+    put(rect(s, 1.25 + j * (CWp + 0.05), 4.64, CWp, 0.36, tint(TB_NAVY, 0.84), TB_NAVY, MSO_SHAPE.ROUNDED_RECTANGLE), [(t_, 4.8, True, TB_NAVY)], align=CEN, m=0.02)
 
-# ---------------- hub
-rect(s, HX - HR - 0.09, HY - HR - 0.09, 2 * HR + 0.18, 2 * HR + 0.18, None, TB_GOLD, MSO_SHAPE.OVAL)
-put(rect(s, HX - HR, HY - HR, 2 * HR, 2 * HR, TB_NAVY, None, MSO_SHAPE.OVAL),
-    [("SENTINEL", 10.5, True, "FFFFFF"), ("Closed-Loop", 6.2, False, "C9D6E6"), ("Predictive Maintenance", 6.2, False, "C9D6E6"), ("Telemetry to Work Order", 5.4, False, "F2A900")],
-    align=PP_ALIGN.CENTER, m=0.02)
+# ---------------- 3 evidence: native charts on the right
+badge(9.05, 2.2, 3)
 
-# ---------------- centre charts
-lpic("v13_cov", 4.7, 5.12, 1.93, 1.78, d_cov, "90% Bound Coverage by Method", BASE + "coverage.html")
-lpic("v13_cost", 6.7, 5.12, 1.93, 1.78, d_cost, "Cost vs Failure-to-Waste r", BASE + "cost_replay.html")
 
-# ---------------- retraining table rows
-rt_rows = None
+def n_cov(x, y, w, h):
+    cd = CategoryChartData()
+    cd.categories = ["Raw prediction", "Offset bound", "Conformal 80%", "Conformal 90%"]
+    cd.add_series("Share of engines", [float(np.mean([conf[f]["test"][m]["cov_lt_cap"] for f in FDS])) for m in M])
+    ch = s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED, Xe(x), Ye(y), We(w), He(h), cd).chart
+    style_chart(ch, "Does the Lower Bound Stay Below the True Life? (Share of Engines; Targets 0.80 and 0.90)")
+    ch.has_legend = False
+    pl = ch.plots[0]
+    pl.gap_width = 45
+    pl.has_data_labels = True
+    pl.data_labels.number_format, pl.data_labels.number_format_is_linked = "0.00", False
+    pl.data_labels.font.size = Pt(7 * TR["f"])
+    pl.data_labels.position = XL_LABEL_POSITION.OUTSIDE_END
+    for i, m in enumerate(M):
+        pt = pl.series[0].points[i]
+        pt.format.fill.solid()
+        pt.format.fill.fore_color.rgb = rgb(MCOL[m])
+    va = ch.value_axis
+    va.minimum_scale, va.maximum_scale, va.major_unit = 0, 1.0, 0.2
+    va.major_gridlines.format.line.color.rgb = rgb("E6EBF2")
+    va.tick_labels.font.size = Pt(6.5 * TR["f"])
+    ch.category_axis.tick_labels.font.size = Pt(6.5 * TR["f"])
+
+
+def n_cost(x, y, w, h):
+    rs = [v["r"] for v in cost[FDS[0]]["at_r"]["rul_raw"]]
+    cd = CategoryChartData()
+    cd.categories = [f"{r:g}" for r in rs]
+    order = [("run_to_failure", "Run to failure (baseline)"), ("fixed_interval", "Fixed service interval"), ("rul_raw", "Predictive, raw prediction"),
+             ("rul_offset", "Predictive, offset bound"), ("rul_conformal10", "Predictive, 90% bound")]
+    for k, lab in order:
+        cd.add_series(lab, [float(np.mean([cost[f]["at_r"][k][j]["cost"] / rs[j] for f in FDS])) for j in range(len(rs))])
+    ch = s.shapes.add_chart(XL_CHART_TYPE.LINE_MARKERS, Xe(x), Ye(y), We(w), He(h), cd).chart
+    style_chart(ch, "Maintenance Cost Relative to Running to Failure (Lower Is Better; Simulated)")
+    for ser, (k, _) in zip(ch.plots[0].series, order):
+        ser.format.line.color.rgb = rgb(PCOL[k])
+        ser.format.line.width = Pt(1.75)
+        ser.smooth = False
+        ser.marker.style = XL_MARKER_STYLE.CIRCLE
+        ser.marker.size = 4
+        ser.marker.format.fill.solid()
+        ser.marker.format.fill.fore_color.rgb = rgb(PCOL[k])
+    va, ca = ch.value_axis, ch.category_axis
+    va.minimum_scale, va.maximum_scale, va.major_unit = 0, 1.1, 0.2
+    va.major_gridlines.format.line.color.rgb = rgb("E6EBF2")
+    va.tick_labels.font.size = Pt(6.5 * TR["f"])
+    ca.tick_labels.font.size = Pt(6.5 * TR["f"])
+    ca.has_title = True
+    ca.axis_title.text_frame.text = "r = cost of one failure \u00f7 cost of one wasted operating cycle"
+    ca.axis_title.text_frame.paragraphs[0].runs[0].font.size = Pt(6 * TR["f"])
+    ch.has_legend = True
+    ch.legend.position = XL_LEGEND_POSITION.BOTTOM
+    ch.legend.include_in_layout = False
+    ch.legend.font.size = Pt(5.5 * TR["f"])
+
+
+n_cov(9.12, 2.2, 3.96, 1.38)
+itag(9.12, 2.2, 3.96, 1.38, BASE + "coverage.html")
+n_cost(9.12, 3.62, 3.96, 1.4)
+itag(9.12, 3.62, 3.96, 1.4, BASE + "cost_replay.html")
+
+# ---------------- bottom row: design reasoning table
+RY, RH = 5.08, 2.0
+rows = [["Design Decision", "Reason", "Evidence"],
+        ["Cap Remaining Life at 125 Cycles", "Early in life the sensors show no wear, so the model is not asked to guess beyond 125 cycles.", f"Error {rng(rm)} cycles"],
+        ["Gradient-Boosted Trees", "Strong on tabular window features and explainable sensor by sensor; seven model families were compared and none was reliably better.", "Seven families compared"],
+        ["Learn from Healthy Behaviour", "Failures are rare, so the anomaly model trains on healthy cycles only and needs no failure labels.", f"Detection score {NA(af, '.3f')}"],
+        [f"Require {an_['persist_k']} Flags in a Row", "A single noisy reading should not trigger an alert; flags must persist.", f"False alarms {min(pf):.2%} to {max(pf):.2%}" if pf else "n/a"],
+        ["Shift Predictions Earlier", "Overestimating remaining life is the dangerous error, so the safe bound deliberately errs early.", f"Late {lr:.0%} to {lc:.0%}"],
+        ["Validate by Whole Engine", "Rows from one engine resemble each other; splitting by engine prevents leakage into validation.", f"{cfg['eval']['cv_folds']} folds, grouped"]]
+table(s, 0.25, RY, 4.1, RH, rows, [1.05, 2.15, 0.9], 5.1)
+
+
+# ---------------- bottom row: native charts
+def n_models(x, y, w, h):
+    names = [("ridge", "Ridge regression"), ("extratrees", "Extra trees"), ("lstm", "Long short-term memory"), ("gru", "Gated recurrent unit"),
+             ("cnn1d", "1-D convolutional network"), ("cnnlstm", "Convolution plus memory")]
+    st = {f: json.loads(art(cfg, "models", f, "rul_study.json").read_text()) for f in FDS}
+    vals = [(lab, float(np.mean([st[f][k]["test_cap_rmse"] for f in FDS]))) for k, lab in names]
+    vals.append(("Gradient-boosted trees (selected)", float(np.mean(rm))))
+    vals.sort(key=lambda t: -t[1])
+    cd = CategoryChartData()
+    cd.categories = [a for a, _ in vals]
+    cd.add_series("Test error, cycles", [b for _, b in vals])
+    ch = s.shapes.add_chart(XL_CHART_TYPE.BAR_CLUSTERED, Xe(x), Ye(y), We(w), He(h), cd).chart
+    style_chart(ch, "Test Error by Model Family (Mean of Four Subsets, Cycles; Lower Is Better)")
+    ch.has_legend = False
+    pl = ch.plots[0]
+    pl.gap_width = 40
+    pl.has_data_labels = True
+    pl.data_labels.number_format, pl.data_labels.number_format_is_linked = "0.0", False
+    pl.data_labels.font.size = Pt(6 * TR["f"])
+    pl.data_labels.position = XL_LABEL_POSITION.OUTSIDE_END
+    for i, (a, _) in enumerate(vals):
+        pt = pl.series[0].points[i]
+        pt.format.fill.solid()
+        pt.format.fill.fore_color.rgb = rgb(TB_NAVY if "selected" in a else "8FB3DE")
+    ch.value_axis.minimum_scale = 0
+    ch.value_axis.major_gridlines.format.line.color.rgb = rgb("E6EBF2")
+    ch.value_axis.tick_labels.font.size = Pt(6 * TR["f"])
+    ch.category_axis.tick_labels.font.size = Pt(5.4 * TR["f"])
+
+
+def n_scatter(x, y, w, h):
+    cd = XyChartData()
+    for f in FDS:
+        se = cd.add_series(f)
+        for a, b in zip(D[f]["true_cap"], D[f]["pred_t"]):
+            se.add_data_point(float(a), float(b))
+    se = cd.add_series("Perfect prediction")
+    se.add_data_point(0, 0)
+    se.add_data_point(125, 125)
+    ch = s.shapes.add_chart(XL_CHART_TYPE.XY_SCATTER, Xe(x), Ye(y), We(w), He(h), cd).chart
+    style_chart(ch, "Predicted vs True Remaining Life, All Test Engines")
+    sers = list(ch.plots[0].series)
+    for ser, f in zip(sers[:4], FDS):
+        ser.marker.style = XL_MARKER_STYLE.CIRCLE
+        ser.marker.size = 3
+        ser.marker.format.fill.solid()
+        ser.marker.format.fill.fore_color.rgb = rgb(SUBF[f])
+        ser.marker.format.line.fill.background()
+        ser.format.line.fill.background()
+    sers[4].marker.style = XL_MARKER_STYLE.NONE
+    sers[4].format.line.color.rgb = rgb(GREY)
+    sers[4].format.line.width = Pt(1)
+    for ax, ttl in ((ch.category_axis, "True remaining life (cycles, capped at 125)"), (ch.value_axis, "Predicted (cycles)")):
+        ax.minimum_scale, ax.maximum_scale, ax.major_unit = 0, 130, 25
+        ax.has_title = True
+        ax.axis_title.text_frame.text = ttl
+        ax.axis_title.text_frame.paragraphs[0].runs[0].font.size = Pt(5.6 * TR["f"])
+        ax.tick_labels.font.size = Pt(5.6 * TR["f"])
+        ax.major_gridlines.format.line.color.rgb = rgb("E6EBF2")
+    ch.has_legend = True
+    ch.legend.position = XL_LEGEND_POSITION.BOTTOM
+    ch.legend.include_in_layout = False
+    ch.legend.font.size = Pt(5.2 * TR["f"])
+
+
 try:
-    rd_ = sorted(art(cfg, "retrain_demo", "x").parent.glob("*.json"))
-    R_ = sorted((json.loads(p_.read_text()) for p_ in rd_), key=lambda r: (r["synthetic_drift_std"], r["days_since"]))
-    rt_rows = [["Scenario", "v1 RMSE", "v2 RMSE", "Promoted"]]
-    for r in R_:
-        lab = f"Drift {r['synthetic_drift_std']:g} sd" if r["synthetic_drift_std"] else (f"Scheduled {r['days_since']} d" if r["days_since"] else "No Drift")
-        rt_rows.append([lab, f"{r['v1_val']['rmse']:.1f}", f"{r['v2_val']['rmse']:.1f}" if "v2_val" in r else "n/a", ("yes" if r["v2_promoted"] else "no") if "v2_val" in r else "n/a"])
-except (OSError, KeyError, ValueError, TypeError):
-    rt_rows = None
+    n_models(4.4, RY, 2.3, RH)
+except (OSError, KeyError, ValueError, TypeError) as e_:
+    print("model comparison chart skipped:", type(e_).__name__, e_)
+    put(rect(s, 4.4, RY, 2.3, RH, TB_BG, TB_LINE), [("Model comparison unavailable: rul_study.json missing", 6, False, INK)], align=CEN)
+n_scatter(6.75, RY, 1.8, RH)
+itag(6.75, RY, 1.8, RH, BASE + "pred_vs_true.html")
 
+# ---------------- 4 triage decision logic (replaces the funnel)
+FXp, FWp = 8.6, 2.5
+rect(s, FXp, RY, FWp, RH, "F7FAFE", TB_LINE)
+badge(FXp + 0.04, RY + 0.02, 4)
+text(s, FXp + 0.28, RY + 0.01, FWp - 0.3, 0.24, [("Triage Decision Logic: How Urgency Is Decided", 6.4, True, TB_NAVY)], anchor=MID_)
+tiers = [("All readings", "Input: every reading of every engine", TB_NAVY, "FFFFFF"),
+         ("Valid, 30+ cycles?", "REVIEW: a person checks; never marked healthy", "8A97A8", "FFFFFF"),
+         ("Life \u2264 60 cycles?", f"MEDIUM: inspect within 10 cycles", TB_GOLD, TB_NAVY),
+         ("Life \u2264 30 cycles?", f"HIGH: maintain within 2 cycles", ORG, "FFFFFF"),
+         ("Life \u2264 15 cycles?", "CRITICAL: remove from service; human review", RED, "FFFFFF")]
+tops_, bots_ = [1.45, 1.27, 1.09, 0.91, 0.73], [1.27, 1.09, 0.91, 0.73, 0.55]
+fcx_ = FXp + 0.08 + 0.725
+for i, (inner, outer, col, tcol) in enumerate(tiers):
+    y = RY + 0.27 + i * 0.3
+    fb = s.shapes.build_freeform(Xe(fcx_ - tops_[i] / 2), Ye(y), scale=1.0)
+    fb.add_line_segments([(Xe(fcx_ + tops_[i] / 2), Ye(y)), (Xe(fcx_ + bots_[i] / 2), Ye(y + 0.28)), (Xe(fcx_ - bots_[i] / 2), Ye(y + 0.28))], close=True)
+    sh = fb.convert_to_shape()
+    sh.fill.solid()
+    sh.fill.fore_color.rgb = rgb(col)
+    sh.line.fill.background()
+    sh.shadow.inherit = False
+    put(sh, [(inner, 5.4, True, tcol)], align=CEN, m=0.0)
+    line(s, fcx_ + (tops_[i] + bots_[i]) / 4, y + 0.14, FXp + 1.6, y + 0.14, col, False, 1.0)
+    put(rect(s, FXp + 1.6, y + 0.01, 0.88, 0.27, tint(col, 0.86), col), [(outer, 4.8, True, INK)], align=LEFT, m=0.03)
+text(s, FXp + 0.04, RY + 1.78, FWp - 0.08, 0.22, [("Life = estimated remaining life after the safety margin. A persistent anomaly also raises severity. Limits are provisional.", 4.6, False, "334155")], align=CEN, anchor=MID_)
 
-def card(x, y, col, tcol, num, title, bl, kind, tw):
-    rect(s, x, y, CWc, CHc, "FFFFFF", TB_LINE)
-    rect(s, x, y, CWc, 0.26, col)
-    put(rect(s, x + 0.04, y + 0.02, 0.22, 0.22, "FFFFFF", None, MSO_SHAPE.OVAL), [(str(num), 7, True, TB_AMB if col == TB_GOLD else col)], align=PP_ALIGN.CENTER, m=0.0)
-    text(s, x + 0.3, y, CWc - 0.34, 0.26, [(title, 8, True, tcol)], anchor=MSO_ANCHOR.MIDDLE)
-    put(rect(s, x, y + 0.26, tw, CHc - 0.26, tint(col, 0.94)), [("\u2022 " + b, 5.9, False, INK) for b in bl], align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, m=0.05)
-    cx_, cy_, cw_, ch_ = x + tw + 0.03, y + 0.29, CWc - tw - 0.06, CHc - 0.32
-    if kind == "life":
-        cimg(s, "v13_life", cx_, cy_, cw_, ch_, d_life, "Engine Life, Cycles")
-    elif kind == "sens":
-        cimg(s, "v13_sens", cx_, cy_, cw_, ch_, d_sens, "Sensors Kept vs Dropped")
-    elif kind == "nfeat":
-        cimg(s, "v13_nf", cx_, cy_, cw_, ch_, d_nfeat, "Feature Columns")
-    elif kind == "scatter":
-        lpic("v13_sc", cx_, cy_, cw_, ch_, d_scatter, "Predicted vs True RUL", BASE + "pred_vs_true.html")
-    elif kind == "funnel":
-        text(s, cx_, cy_ - 0.02, cw_, 0.15, [("Triage Funnel (Engines)", 6, True, TB_NAVY)], align=PP_ALIGN.CENTER)
-        fun = [("Replayed", NTOT, TB_NAVY), ("Orders", N_ORD, TB_BLUE), ("HIGH+", N_HIGH, TB_GOLD), ("CRITICAL", N_CRIT, RED)]
-        tops = [cw_ - 0.04, cw_ - 0.3, cw_ - 0.56, cw_ - 0.82]
-        bots = [cw_ - 0.3, cw_ - 0.56, cw_ - 0.82, cw_ - 1.08]
-        fx = cx_ + cw_ / 2
-        for i, (lab, n, c_) in enumerate(fun):
-            yy = cy_ + 0.16 + i * 0.27
-            fb = s.shapes.build_freeform(Xe(fx - tops[i] / 2), Ye(yy), scale=1.0)
-            fb.add_line_segments([(Xe(fx + tops[i] / 2), Ye(yy)), (Xe(fx + bots[i] / 2), Ye(yy + 0.255)), (Xe(fx - bots[i] / 2), Ye(yy + 0.255))], close=True)
-            sh = fb.convert_to_shape()
-            sh.fill.solid()
-            sh.fill.fore_color.rgb = rgb(c_)
-            sh.line.fill.background()
-            sh.shadow.inherit = False
-            lnk(sh, BASE + "funnel.html")
-            put(sh, [(f"{n} {lab}", 5.4, True, TB_NAVY if c_ == TB_GOLD else "FFFFFF")], align=PP_ALIGN.CENTER, m=0.0)
-    elif kind == "table" and rt_rows:
-        text(s, cx_, cy_ - 0.02, cw_, 0.3, [("Retraining Demo (FD001, Synthetic Drift)", 5.6, True, TB_NAVY)], align=PP_ALIGN.CENTER)
-        table(s, cx_, cy_ + 0.28, cw_, 0.85, rt_rows, [1.5, 0.7, 0.7, 0.8], 4.8)
-
-
-cards = [
-    (LXc, Y0c, TB_NAVY, "FFFFFF", 1, "Problem and Objective", [
-        "Problem: failures found after breakdown or at fixed intervals cause downtime and avoidable cost.",
-        "Opportunity: sensor streams show degradation well before failure.",
-        "Objective: telemetry to work order with no manual step; humans review exceptions only.",
-        "Constraints: lightweight, open-source, no LLM, rare failures.",
-        f"Coverage: FD001 to FD004, {NTOT} test engines, 1 or 6 conditions, 1 or 2 fault modes."], "life", 2.65),
-    (LXc, Y0c + STEPc, TB_BLUE, "FFFFFF", 2, "Data Engineering", [
-        "Ingest: 26 columns per cycle from batch files; stream-ready interface.",
-        "Validate: NaN, duplicates, gaps; test RUL labels aligned to engines.",
-        f"Regimes: KMeans k={dcfg['n_regimes']} on settings; per-regime z-score from training data only.",
-        f"Clean: causal median w={dcfg['smooth_window']}; constant and weak-trend sensors dropped.",
-        f"Output: {min(nsen)} to {max(nsen)} informative sensors; raw inputs preserved."], "sens", 2.65),
-    (LXc, Y0c + 2 * STEPc, TB_SKY, "FFFFFF", 3, "Causal Feature Engineering", [
-        "Trailing windows of 30 and 10 cycles; never cross engines, no future data.",
-        f"Six statistics per sensor give {min(nfeat)} to {max(nfeat)} columns.",
-        f"Target: RUL capped at {cap_}; weight 3 below RUL 30.",
-        f"Engine-grouped {cfg['eval']['cv_folds']}-fold CV; test set read once.",
-        "FD001 ablation: slope features carry the signal (CV RMSE 24.8 to 13.9)."], "nfeat", 2.65),
-    (RXc, Y0c, TB_CYAN, "FFFFFF", 4, "Detection and Prediction Models", [
-        f"Anomaly: autoencoder on healthy cycles + Isolation Forest; alert after k={an_['persist_k']} flags.",
-        f"RUL: XGBoost {cfg['rul']['xgb']['n_estimators']} trees, depth {cfg['rul']['xgb']['max_depth']}; 7 families compared.",
-        "Bound: offset deployed; conformal 90% offline (measured, not guaranteed).",
-        "Attribution: exact TreeSHAP, top-3 sensors per order.",
-        f"Result: RMSE {rng(rm)}; AUROC {NA(af, '.3f')}; late {lr:.0%} to {lc:.0%}."], "scatter", 2.65),
-    (RXc, Y0c + STEPc, TB_GOLD, TB_NAVY, 5, "Decision Agent (Non-LLM)", [
-        "Rules: CRITICAL, HIGH, MEDIUM, LOW, REVIEW; first match wins, recorded on order.",
-        f"RUL cutoffs {tg_['critical_rul']}/{tg_['high_rul']}/{tg_['medium_rul']} cycles (provisional) or persistent anomaly.",
-        "Safety: invalid input or short history gives REVIEW, never LOW.",
-        "Orders: simulated, deterministic ID, once per severity, restart-safe.",
-        f"Outcome: {N_ORD} of {NTOT} escalated; {N_CRIT} CRITICAL for human review."], "funnel", 2.65),
-    (RXc, Y0c + 2 * STEPc, MIDB, "FFFFFF", 6, "MLOps and Learning", [
-        "MLflow tracks parameters, metrics, models per run.",
-        "Registry: champion and challenger; promote only on RMSE gain.",
-        f"Drift gate: PSI>{rc_['psi_alarm']}, RMSE>{rc_['rmse_factor']}x, or {rc_['days']} days.",
-        "Retrain on engine-held-out validation; rollback kept.",
-        "Limit: FD001, synthetic drift; real labels arrive after failures."], "table", 2.4 if rt_rows else CWc),
-]
-for c_ in cards:
-    card(*c_)
-for k in range(3):
-    yc = Y0c + CHc / 2 + k * STEPc
-    for xx, cc in ((LXc + CWc, cards[k][2]), (RXc, cards[3 + k][2])):
-        rect(s, xx - 0.05, yc - 0.05, 0.1, 0.1, cc, "FFFFFF", MSO_SHAPE.OVAL)
+# ---------------- 5 key findings
+KX, KW2 = 11.15, 1.93
+hd = rect(s, KX, RY, KW2, 0.27, TB_NAVY)
+badge(KX + 0.04, RY + 0.025, 5)
+text(s, KX + 0.3, RY, KW2 - 0.3, 0.27, [("Key Findings", 9, True, "FFFFFF")], anchor=MID_)
+fnd = [f"Accuracy: predictions are most accurate near failure, with an error of {rng(b30)} cycles when 30 or fewer remain, versus {rng(bmid)} cycles when 60 to 125 remain.",
+       f"Safety: the 90% lower bound reduces dangerous overestimates of remaining life from {lr:.0%} to {lc:.0%} of engines, at a cost of {rng(sl, '.0f')} cycles of earlier warning.",
+       f"Detection: abnormal behaviour is found with an area under the curve of {NA(af, '.3f')}; alerts arrive {rng(lead, '.0f')} cycles before failure." if lead else "Detection: see the anomaly results in the appendix.",
+       f"Action: {N_ORD} of {NTOT} test engines triggered simulated work orders; {N_CRIT} reached the critical level for human review.",
+       (f"Economics: in simulation, predictive maintenance is cheaper than running to failure once a failure costs about {rng(be)} times a wasted cycle." if be else "Economics: see the cost chart.")]
+put(rect(s, KX, RY + 0.27, KW2, RH - 0.27, TB_BG, TB_LINE), [("\u2022 " + t_, 5.6, False, INK) for t_ in fnd], align=LEFT, anchor=MSO_ANCHOR.TOP, m=0.07)
 
 # ---------------- links footer
-text(s, 0.25, 7.0, 3.6, 0.3, [("Charts marked Interactive open live, hoverable versions:", 6, True, TB_NAVY)], anchor=MSO_ANCHOR.MIDDLE)
-lbtn(3.9, 7.02, 3.0, 0.26, "Live Dashboard (Streamlit, localhost:8501)", "http://localhost:8501")
-lbtn(7.0, 7.02, 2.8, 0.26, "All Interactive Charts (Index)", BASE + "index.html", TB_BLUE)
-lbtn(9.9, 7.02, 3.18, 0.26, "Source Code: github.com/abhishekk-km/FLEET-PM", REPO, TB_CYAN)
+text(s, 0.25, 7.1, 3.6, 0.3, [("Charts tagged Interactive open live, hoverable versions:", 6, True, TB_NAVY)], anchor=MID_)
+lbtn(3.9, 7.12, 3.0, 0.26, "Live Dashboard (Streamlit, localhost:8501)", "http://localhost:8501")
+lbtn(7.0, 7.12, 2.8, 0.26, "All Interactive Charts (Index)", BASE + "index.html", TB_BLUE)
+lbtn(9.9, 7.12, 3.18, 0.26, "Source Code: github.com/abhishekk-km/FLEET-PM", REPO, TB_CYAN)
 
 # ------------------------------------------------------------------ appendix frame with navigation
 TR.update(APP)

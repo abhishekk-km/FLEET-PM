@@ -1,0 +1,58 @@
+
+===== FD001: engines train 100, test 100, cap 125.0 =====
+ nested all_rows|0.1             cut_cov 0.869+-0.033 allrows 0.894 band_cov [0.893, 0.863, 0.864] band_dev 0.043
+ nested all_rows|0.2             cut_cov 0.755+-0.045 allrows 0.793 band_cov [0.78, 0.757, 0.747] band_dev 0.057
+ nested one_cut_per_engine|0.1   cut_cov 0.895+-0.032 allrows 0.916 band_cov [0.9, 0.893, 0.894] band_dev 0.037
+ nested one_cut_per_engine|0.2   cut_cov 0.792+-0.046 allrows 0.828 band_cov [0.797, 0.792, 0.79] band_dev 0.051
+ variant scores (lower better): {'all_rows': 0.08888300232350593, 'one_cut_per_engine': 0.05081838600578706} -> frozen variant: one_cut_per_engine
+ q bands (<30,30-60,>=60): offset [3.17, 7.99, 12.49] conf0.2 [3.51, 11.02, 16.66] conf0.1 [4.73, 15.32, 26.51]
+ TEST (official, evaluated once; capped labels unless stated)
+  raw              cov 0.370 CI[0.28, 0.46] cov_raw 0.390 cov_lt_cap 0.315 (n 89) band_cov [0.4, 0.5, 0.338] n [25, 10, 65] slack 0.00 CI[0.0, 0.0] rmse 13.18 nasa 292 | raw rmse 14.16 nasa 316
+  offset_q0.8      cov 0.720 CI[0.63, 0.81] cov_raw 0.720 cov_lt_cap 0.685 (n 89) band_cov [0.76, 1.0, 0.662] n [25, 10, 65] slack 9.71 CI[8.96, 10.45] rmse 13.50 nasa 227 | raw rmse 15.36 nasa 293
+  conformal_a0.2   cov 0.770 CI[0.69, 0.85] cov_raw 0.770 cov_lt_cap 0.742 (n 89) band_cov [0.76, 1.0, 0.738] n [25, 10, 65] slack 12.81 CI[11.76, 13.84] rmse 15.31 nasa 284 | raw rmse 17.23 nasa 375
+  conformal_a0.1   cov 0.920 CI[0.86, 0.97] cov_raw 0.920 cov_lt_cap 0.910 (n 89) band_cov [0.8, 1.0, 0.954] n [25, 10, 65] slack 19.95 CI[18.19, 21.7] rmse 21.05 nasa 564 | raw rmse 22.95 nasa 758
+  old bootstrap-ensemble 95% coverage (handoff, not recomputed, different quantity): None
+
+===== FD002: engines train 260, test 259, cap 125.0 =====
+ nested all_rows|0.1             cut_cov 0.876+-0.019 allrows 0.901 band_cov [0.894, 0.878, 0.871] band_dev 0.028
+ nested all_rows|0.2             cut_cov 0.761+-0.027 allrows 0.802 band_cov [0.781, 0.759, 0.757] band_dev 0.044
+ nested one_cut_per_engine|0.1   cut_cov 0.903+-0.017 allrows 0.923 band_cov [0.9, 0.9, 0.905] band_dev 0.022
+ nested one_cut_per_engine|0.2   cut_cov 0.802+-0.027 allrows 0.838 band_cov [0.793, 0.8, 0.805] band_dev 0.033
+ variant scores (lower better): {'all_rows': 0.06715923200888282, 'one_cut_per_engine': 0.03061092793709452} -> frozen variant: one_cut_per_engine
+ q bands (<30,30-60,>=60): offset [3.54, 10.27, 15.0] conf0.2 [3.77, 11.98, 19.88] conf0.1 [5.42, 15.91, 29.46]
+ TEST (official, evaluated once; capped labels unless stated)
+  raw              cov 0.544 CI[0.483, 0.602] cov_raw 0.560 cov_lt_cap 0.436 (n 202) band_cov [0.453, 0.583, 0.572] n [64, 36, 159] slack 0.00 CI[0.0, 0.0] rmse 14.27 nasa 1024 | raw rmse 27.05 nasa 11550
+  offset_q0.8      cov 0.826 CI[0.78, 0.869] cov_raw 0.826 cov_lt_cap 0.777 (n 202) band_cov [0.734, 0.972, 0.83] n [64, 36, 159] slack 11.51 CI[10.97, 12.05] rmse 19.47 nasa 1281 | raw rmse 33.65 nasa 34648
+  conformal_a0.2   cov 0.869 CI[0.826, 0.907] cov_raw 0.869 cov_lt_cap 0.832 (n 202) band_cov [0.766, 1.0, 0.881] n [64, 36, 159] slack 14.80 CI[14.02, 15.58] rmse 22.22 nasa 1763 | raw rmse 36.33 nasa 50330
+  conformal_a0.1   cov 0.915 CI[0.88, 0.946] cov_raw 0.915 cov_lt_cap 0.891 (n 202) band_cov [0.844, 1.0, 0.925] n [64, 36, 159] slack 21.62 CI[20.47, 22.84] rmse 28.51 nasa 3597 | raw rmse 42.22 nasa 105111
+  old bootstrap-ensemble 95% coverage (handoff, not recomputed, different quantity): 0.44
+
+===== FD003: engines train 100, test 100, cap 125.0 =====
+ nested all_rows|0.1             cut_cov 0.866+-0.038 allrows 0.899 band_cov [0.893, 0.878, 0.858] band_dev 0.042
+ nested all_rows|0.2             cut_cov 0.741+-0.047 allrows 0.800 band_cov [0.779, 0.751, 0.731] band_dev 0.064
+ nested one_cut_per_engine|0.1   cut_cov 0.897+-0.035 allrows 0.925 band_cov [0.889, 0.909, 0.896] band_dev 0.039
+ nested one_cut_per_engine|0.2   cut_cov 0.799+-0.044 allrows 0.847 band_cov [0.792, 0.798, 0.8] band_dev 0.053
+ variant scores (lower better): {'all_rows': 0.09924580225544444, 'one_cut_per_engine': 0.04830290802406054} -> frozen variant: one_cut_per_engine
+ q bands (<30,30-60,>=60): offset [3.02, 7.84, 7.11] conf0.2 [2.98, 9.44, 14.75] conf0.1 [4.39, 13.21, 23.81]
+ TEST (official, evaluated once; capped labels unless stated)
+  raw              cov 0.450 CI[0.36, 0.55] cov_raw 0.470 cov_lt_cap 0.376 (n 85) band_cov [0.5, 0.5, 0.422] n [20, 16, 64] slack 0.00 CI[0.0, 0.0] rmse 13.96 nasa 423 | raw rmse 15.16 nasa 455
+  offset_q0.8      cov 0.700 CI[0.61, 0.78] cov_raw 0.700 cov_lt_cap 0.647 (n 85) band_cov [0.9, 0.812, 0.609] n [20, 16, 64] slack 6.41 CI[6.06, 6.74] rmse 13.84 nasa 289 | raw rmse 15.77 nasa 345
+  conformal_a0.2   cov 0.810 CI[0.73, 0.88] cov_raw 0.810 cov_lt_cap 0.776 (n 85) band_cov [0.9, 0.938, 0.75] n [20, 16, 64] slack 11.54 CI[10.56, 12.43] rmse 15.84 nasa 308 | raw rmse 18.22 nasa 409
+  conformal_a0.1   cov 0.880 CI[0.81, 0.94] cov_raw 0.880 cov_lt_cap 0.859 (n 85) band_cov [1.0, 0.938, 0.828] n [20, 16, 64] slack 18.23 CI[16.59, 19.75] rmse 20.71 nasa 538 | raw rmse 23.20 nasa 742
+  old bootstrap-ensemble 95% coverage (handoff, not recomputed, different quantity): 0.58
+
+===== FD004: engines train 249, test 248, cap 125.0 =====
+ nested all_rows|0.1             cut_cov 0.865+-0.019 allrows 0.900 band_cov [0.893, 0.878, 0.857] band_dev 0.033
+ nested all_rows|0.2             cut_cov 0.746+-0.029 allrows 0.800 band_cov [0.783, 0.756, 0.737] band_dev 0.050
+ nested one_cut_per_engine|0.1   cut_cov 0.900+-0.020 allrows 0.927 band_cov [0.898, 0.909, 0.898] band_dev 0.025
+ nested one_cut_per_engine|0.2   cut_cov 0.801+-0.028 allrows 0.846 band_cov [0.8, 0.812, 0.799] band_dev 0.035
+ variant scores (lower better): {'all_rows': 0.08630932123533096, 'one_cut_per_engine': 0.030929556259113804} -> frozen variant: one_cut_per_engine
+ q bands (<30,30-60,>=60): offset [4.8, 9.93, 9.29] conf0.2 [5.05, 10.8, 17.32] conf0.1 [7.3, 15.21, 28.35]
+ TEST (official, evaluated once; capped labels unless stated)
+  raw              cov 0.516 CI[0.456, 0.581] cov_raw 0.556 cov_lt_cap 0.392 (n 181) band_cov [0.333, 0.424, 0.591] n [51, 33, 164] slack 0.00 CI[0.0, 0.0] rmse 14.24 nasa 993 | raw rmse 26.46 nasa 5054
+  offset_q0.8      cov 0.770 CI[0.714, 0.819] cov_raw 0.770 cov_lt_cap 0.685 (n 181) band_cov [0.784, 0.788, 0.762] n [51, 33, 164] slack 8.45 CI[8.22, 8.68] rmse 16.76 nasa 1103 | raw rmse 30.65 nasa 9405
+  conformal_a0.2   cov 0.839 CI[0.79, 0.879] cov_raw 0.839 cov_lt_cap 0.779 (n 181) band_cov [0.784, 0.818, 0.86] n [51, 33, 164] slack 13.93 CI[13.27, 14.49] rmse 20.70 nasa 1570 | raw rmse 35.03 nasa 16963
+  conformal_a0.1   cov 0.927 CI[0.891, 0.96] cov_raw 0.927 cov_lt_cap 0.901 (n 181) band_cov [0.863, 0.939, 0.945] n [51, 33, 164] slack 22.27 CI[21.09, 23.32] rmse 28.05 nasa 3344 | raw rmse 42.15 nasa 39306
+  old bootstrap-ensemble 95% coverage (handoff, not recomputed, different quantity): 0.5
+
+Saved artifacts/ext_conformal.json, figures/ext_conformal.png, ext_conformal_bounds_FD*.npz

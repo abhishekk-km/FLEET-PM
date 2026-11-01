@@ -1,0 +1,39 @@
+{
+  "fd": "FD001",
+  "model": "xgb",
+  "synthetic_drift_std": 0.0,
+  "days_since": 0,
+  "engines": {
+    "init": 50,
+    "arr": 30,
+    "val": 20
+  },
+  "v1_val": {
+    "rmse": 17.009226416167504,
+    "mae": 12.744394049346448,
+    "nasa": 109.85942966235716,
+    "nasa_mean": 5.492971483117858
+  },
+  "v1_arrivals": {
+    "rmse": 17.020597047799026,
+    "mae": 12.413225735823312,
+    "nasa": 189.78326190669165,
+    "nasa_mean": 6.326108730223055
+  },
+  "psi_top5": {
+    "sensor_8__mean": 0.138,
+    "sensor_3__max": 0.136,
+    "sensor_3__min": 0.087,
+    "sensor_9__mean": 0.071,
+    "sensor_13__max": 0.07
+  },
+  "max_psi": 0.1383124895488843,
+  "n_features_above_alarm": 0,
+  "trigger": {
+    "rmse": false,
+    "days": false,
+    "psi": false
+  },
+  "retrain_triggered": false,
+  "v1_promoted": false
+}

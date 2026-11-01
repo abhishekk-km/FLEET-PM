@@ -1,0 +1,25 @@
+{
+  "work_order_id": "WO-FD003-ENG040-MEDIUM",
+  "incident_key": "FD003-ENG040-MEDIUM",
+  "status": "OPEN",
+  "simulated": true,
+  "timestamp_note": "replay cycle index of a benchmark trajectory, not calendar time",
+  "engine_id": 40,
+  "current_cycle": 290,
+  "rul_mean": 67.06,
+  "rul_std": 14.01,
+  "rul_conservative": 59.95,
+  "health_index": 0.046,
+  "persistent_anomaly": false,
+  "severity": "MEDIUM",
+  "rule_fired": "R3a:rul<=medium_rul",
+  "recommendation": "Schedule inspection within 10 cycles.",
+  "requires_human_review": false,
+  "auto_generated": true,
+  "model_version": "FD003-boost-xgb-s42",
+  "top_degradation_sensors": [
+    "sensor_12",
+    "sensor_11",
+    "sensor_9"
+  ]
+}

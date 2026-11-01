@@ -1,0 +1,25 @@
+{
+  "work_order_id": "WO-FD002-ENG011-CRITICAL",
+  "incident_key": "FD002-ENG011-CRITICAL",
+  "status": "OPEN",
+  "simulated": true,
+  "timestamp_note": "replay cycle index of a benchmark trajectory, not calendar time",
+  "engine_id": 11,
+  "current_cycle": 147,
+  "rul_mean": 17.99,
+  "rul_std": 5.35,
+  "rul_conservative": 14.45,
+  "health_index": 0.057,
+  "persistent_anomaly": false,
+  "severity": "CRITICAL",
+  "rule_fired": "R1a:rul<=critical_rul",
+  "recommendation": "Remove from service immediately. Full inspection required.",
+  "requires_human_review": true,
+  "auto_generated": true,
+  "model_version": "FD002-boost-xgb-s42",
+  "top_degradation_sensors": [
+    "sensor_11",
+    "sensor_4",
+    "sensor_15"
+  ]
+}

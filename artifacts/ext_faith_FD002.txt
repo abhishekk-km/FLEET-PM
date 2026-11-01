@@ -1,0 +1,16 @@
+
+===== FD002: faithfulness =====
+[FD002] 15 sensors, 120 features, trees 300, lr 0.083
+[FD002] fold 1/5 full RMSE 16.06 top3 ['sensor_4', 'sensor_11', 'sensor_15'] deployed-OOF ref 15.94 (108s)
+[FD002] fold 2/5 full RMSE 17.08 top3 ['sensor_4', 'sensor_11', 'sensor_15'] deployed-OOF ref 16.81 (158s)
+[FD002] fold 3/5 full RMSE 16.24 top3 ['sensor_11', 'sensor_4', 'sensor_15'] deployed-OOF ref 16.07 (137s)
+[FD002] fold 4/5 full RMSE 16.74 top3 ['sensor_11', 'sensor_4', 'sensor_15'] deployed-OOF ref 16.83 (138s)
+[FD002] fold 5/5 full RMSE 17.98 top3 ['sensor_4', 'sensor_11', 'sensor_15'] deployed-OOF ref 17.92 (145s)
+ full-model grouped-CV RMSE 16.82
+ k | remove-top minus remove-random RMSE (faithful if >0) | keep-top minus keep-random (faithful if <0)   [mean, 95% t-CI over folds]
+ 1 | +0.451 [-0.606, +1.509] | -6.298 [-11.729, -0.867]
+ 2 | +1.051 [+0.093, +2.008] | -3.152 [-3.943, -2.361]
+ 3 | +2.050 [+1.214, +2.885] | -3.390 [-5.317, -1.463]
+ 5 | +2.030 [+1.453, +2.608] | -2.354 [-2.881, -1.827]
+
+Saved artifacts/ext_explain.json
